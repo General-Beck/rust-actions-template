@@ -4,8 +4,6 @@ $SCCACHE_CACHE_SIZE="1G"
 $SCCACHE_IDLE_TIMEOUT=0
 $SCCACHE_DIR="$HOME/sccache"
 $version="0.2.12"
-rm $HOME/sccache -r -fo
-mkdir $HOME/sccache
 echo "Current OS:" $os
 switch ($os){
    "macOS" {$platform = "x86_64-apple-darwin"}

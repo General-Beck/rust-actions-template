@@ -49,8 +49,11 @@ jobs:
           toolchain:   ${{ matrix.toolchain }}
           components:  clippy, rustfmt
           override:    true
-      - name:          Set cache hash
-        run:           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}
+      - name:          Set cache_hash ENV and prepare cache dir's
+        run: |
+          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}
+          mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
+        shell: bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
