@@ -50,9 +50,7 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache hash
-        env:
-          CACHE_HASH:  "${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
-          run: echo $CACHE_HASH
+        run:  export CACHE_HASH="${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
