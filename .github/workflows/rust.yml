@@ -31,10 +31,10 @@ jobs:
       RUST_BACKTRACE:  full
     steps:
       - name:          Set default compiler
-        if:            matrix.compiler  == 'clang'
+        if:            matrix.compiler == 'clang'
         run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
       - name:          Install LLVM for Windows
-        if:            matrix.platform == 'windows-latest'  && matrix.compiler  == 'clang'
+        if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
         run:           choco install llvm
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
@@ -50,10 +50,10 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
-        run: |
+        run:           |
           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler }}-${{ hashFiles('**/Cargo.lock') }}
           mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
-        shell: bash
+        shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
@@ -90,7 +90,7 @@ jobs:
         run:           sccache --stop-server
   test:
     name:              Test
-    needs: [check]
+    needs:             [check]
     strategy:
       matrix:
         platform:
@@ -109,10 +109,10 @@ jobs:
       RUST_BACKTRACE:  full
     steps:
       - name:          Set default compiler
-        if:            matrix.compiler  == 'clang'
+        if:            matrix.compiler == 'clang'
         run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
       - name:          Install LLVM for Windows
-        if:            matrix.platform == 'windows-latest'  && matrix.compiler  == 'clang'
+        if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
         run:           choco install llvm
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
@@ -128,10 +128,10 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
-        run: |
+        run:           |
           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler }}-${{ hashFiles('**/Cargo.lock') }}
           mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
-        shell: bash
+        shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
@@ -168,7 +168,7 @@ jobs:
         run:           sccache --stop-server
   build:
     name:              Build
-    needs: [check,test]
+    needs:             [check,test]
     strategy:
       matrix:
         platform:
@@ -187,10 +187,10 @@ jobs:
       RUST_BACKTRACE:  full
     steps:
       - name:          Set default compiler
-        if:            matrix.compiler  == 'clang'
+        if:            matrix.compiler == 'clang'
         run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
       - name:          Install LLVM for Windows
-        if:            matrix.platform == 'windows-latest'  && matrix.compiler  == 'clang'
+        if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
         run:           choco install llvm
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
@@ -206,10 +206,10 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
-        run: |
+        run:           |
           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler }}-${{ hashFiles('**/Cargo.lock') }}
           mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
-        shell: bash
+        shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:

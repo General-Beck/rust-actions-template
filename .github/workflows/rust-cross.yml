@@ -19,7 +19,7 @@ jobs:
           - stable
           - beta
           - nightly
-        target: #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
+        target:        #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
           - aarch64-unknown-linux-gnu
           - aarch64-unknown-linux-musl
           - armv7-unknown-linux-gnueabihf
@@ -44,10 +44,10 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
-        run: |
+        run:           |
           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
           mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
-        shell: bash
+        shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
@@ -76,7 +76,7 @@ jobs:
       - name:          Checking ${{ matrix.target }}-${{matrix.toolchain}}
         uses:          actions-rs/cargo@master
         with:
-          use-cross: true
+          use-cross:   true
           command:     check
           args:        --target ${{ matrix.target }} --locked --all --release --verbose
       - name:          Stop sccache
@@ -84,14 +84,14 @@ jobs:
         run:           sccache --stop-server
   test:
     name:              Test cross
-    needs: [check]
+    needs:             [check]
     strategy:
       matrix:
         toolchain:
           - stable
           - beta
           - nightly
-        target: #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
+        target:        #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
           - aarch64-unknown-linux-gnu
           - aarch64-unknown-linux-musl
           - armv7-unknown-linux-gnueabihf
@@ -116,10 +116,10 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
-        run: |
+        run:           |
           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
           mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
-        shell: bash
+        shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
@@ -148,7 +148,7 @@ jobs:
       - name:          Testing ${{ matrix.target }}-${{matrix.toolchain}}
         uses:          actions-rs/cargo@master
         with:
-          use-cross: true
+          use-cross:   true
           command:     test
           args:        --target ${{ matrix.target }} --locked --all --release --verbose
       - name:          Stop sccache
@@ -156,14 +156,14 @@ jobs:
         run:           sccache --stop-server
   build:
     name:              Build cross
-    needs: [check,test]
+    needs:             [check,test]
     strategy:
       matrix:
         toolchain:
           - stable
           - beta
           - nightly
-        target: #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
+        target:        #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
           - aarch64-unknown-linux-gnu
           - aarch64-unknown-linux-musl
           - armv7-unknown-linux-gnueabihf
@@ -188,10 +188,10 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
-        run: |
+        run:           |
           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
           mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
-        shell: bash
+        shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
@@ -220,7 +220,7 @@ jobs:
       - name:          Building ${{ matrix.target }}-${{matrix.toolchain}}
         uses:          actions-rs/cargo@master
         with:
-          use-cross: true
+          use-cross:   true
           command:     build
           args:        --target ${{ matrix.target }} --locked --all --release --verbose
       - name:          Stop sccache
