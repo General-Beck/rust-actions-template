@@ -51,8 +51,8 @@ jobs:
           override:    true
       - name:          Set cache hash
         run: |
-         CACHE_HASH="${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
-         echo "::set-env name=CACHE_HASH::'CACHE_HASH'"
+         CACHE_HASH=""
+         echo "::set-env name=CACHE_HASH::'${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}'"
          printenv
 
       - name:          Cache cargo registry
