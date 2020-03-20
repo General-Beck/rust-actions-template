@@ -9,9 +9,9 @@ echo "_____ Post-processing binaries _____"
 mkdir -p artifacts/
 cd artifacts/
 
-for binary in $(ls)
+for binary in $(ls ../target/$1/release/)
 do
-  cp -v ../target/$1/release/$binary $binary
+  cp -v target/$1/release/$binary $binary
   rhash -v --sha3-256 $binary -o $binary.sha3 #Calculating checksum
 done
 
