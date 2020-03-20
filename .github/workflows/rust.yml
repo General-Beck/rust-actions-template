@@ -53,6 +53,7 @@ jobs:
         run: |
          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}
          printenv
+      - run: echo env['cache_hash']
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
