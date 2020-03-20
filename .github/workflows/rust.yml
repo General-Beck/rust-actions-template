@@ -48,8 +48,8 @@ jobs:
         shell:         bash
         run: |
           export get_hash="${{ runner.os }}-${rustc-hash}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
-          echo "get_hash value: " $get_hash
-          echo "::set-env name=cache_hash::$get_hash"
+          echo "get_hash value: " $get_hash " " $ {rustc_hash}
+          #echo "::set-env name=cache_hash::$get_hash"
           printenv
       - name:          Cache cargo registry
         uses:          actions/cache@master
