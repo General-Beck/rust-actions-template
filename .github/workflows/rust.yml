@@ -55,12 +55,12 @@ jobs:
         uses:          actions/cache@master
         with:
           path:        $HOME/.cargo/registry
-          key:         cargo-registry-${{ cache-hash }}
+          key:         cargo-registry-
       - name:          Cache cargo index
         uses:          actions/cache@master
         with:
           path:        $HOME/.cargo/git
-          key:         cargo-git-${{ cache-hash }}
+          key:         cargo-git-
       - name:          Cache cargo build
         uses:          actions/cache@master
         with:
@@ -70,7 +70,7 @@ jobs:
         uses:          actions/cache@master
         with:
           path:        "$HOME/sccache"
-          key:         sccache-${{ cache-hash }}
+          key:         sccache-
       - name:          Install & start sccache for ${{ matrix.platform }}
         shell:         pwsh
         run:           pwsh scripts/actions/install-sccache.ps1 ${{ runner.os}}
