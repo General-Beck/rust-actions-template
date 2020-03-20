@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         platform:
-          - ubuntu-16.04
+          - ubuntu-latest
           - macos-latest
           - windows-latest
         toolchain:
@@ -42,7 +42,7 @@ jobs:
           fetch-depth: 5
           submodules:  recursive
       - name:          Install toolchain
-        id: toolchain
+        id:            toolchain
         uses:          actions-rs/toolchain@master
         with:
           profile:     minimal
@@ -50,10 +50,7 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache hash
-        run: |
-         echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}
-         printenv
-      #- run: echo ${ env['cache_hash'] }
+        run:           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
@@ -63,17 +60,17 @@ jobs:
         uses:          actions/cache@master
         with:
           path:        $HOME/.cargo/git
-          key:         cargo-git-$CACHE_HASH
+          key:         cargo-git-${{ env['cache_hash'] }}
       - name:          Cache cargo build
         uses:          actions/cache@master
         with:
           path:        target
-          key:         cargo-target-$CACHE_HASH
+          key:         cargo-target-${{ env['cache_hash'] }}
       - name:          Cache sccache
         uses:          actions/cache@master
         with:
           path:        "$HOME/sccache"
-          key:         sccache-$CACHE_HASH
+          key:         sccache-${{ env['cache_hash'] }}
       - name:          Install & start sccache for ${{ matrix.platform }}
         shell:         pwsh
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
