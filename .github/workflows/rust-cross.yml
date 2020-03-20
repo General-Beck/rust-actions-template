@@ -227,11 +227,11 @@ jobs:
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
-- name:                Prepare artifact's
-  run:                 .github/workflows/prepare_artifacts.sh ${{ matrix.target }}
-  shell:               bash
-- name:                Upload artifact's
-  uses:                actions/upload-artifact@v1
-  with:
-    name:              ${{ matrix.platform }}.${{ matrix.toolchain }}.${{ matrix.compiler }}.zip
-    path:              artifacts/
+      - name:          Prepare artifact's
+        run:           .github/workflows/prepare_artifacts.sh ${{ matrix.target }}
+        shell:         bash
+      - name:          Upload artifact's
+        uses:          actions/upload-artifact@v1
+        with:
+          name:        ${{ matrix.platform }}.${{ matrix.toolchain }}.${{ matrix.compiler }}.zip
+          path:        artifacts/
