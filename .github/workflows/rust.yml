@@ -1,4 +1,4 @@
-name:                  Build and Test Suite
+name:                  Check, Test and Build Suite
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
       - stable
 jobs:
   build-tests:
-    name:              Test and Build
+    name:              Check
     strategy:
       matrix:
         platform:
@@ -49,7 +49,7 @@ jobs:
         shell:         bash
         run: |
           export get_hash="${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
-          #echo "get_hash value: " $get_hash " " $rustc_hash
+          echo "get_hash value: " $get_hash
           echo "::set-env name=cache_hash::$get_hash"
           echo "cache_hash " $cache_hash
           printenv
