@@ -1,2 +1,2 @@
 # rust-actions-template
-Building Rust for Multiple Platforms Using Github Actions
+Checking, Testing and Building Rust for Multiple Platforms Using Github Actions
