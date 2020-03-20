@@ -65,7 +65,7 @@ jobs:
         uses:          actions/cache@master
         with:
           path:        target
-          key:         cargo-target-${{ cachs-hash }}
+          key:         cargo-target-
       - name:          Cache sccache
         uses:          actions/cache@master
         with:
