@@ -11,7 +11,7 @@ on:
     paths-ignore:
       - 'README.MD'
 jobs:
-  build-tests:
+  check:
     name:              Check
     strategy:
       matrix:
