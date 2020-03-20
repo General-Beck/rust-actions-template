@@ -29,6 +29,7 @@ jobs:
     runs-on:           ${{ matrix.platform }}
     env:
       RUST_BACKTRACE:  full
+      CACHE_HASH:      ""
     steps:
       - name:          Set default compiler
         if:            matrix.compiler == 'clang'
