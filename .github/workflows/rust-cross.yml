@@ -73,7 +73,7 @@ jobs:
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
-      - name:          Checking ${{ matrix.target }}-${{matrix.toolchain}}
+      - name:          Checking ${{ matrix.target }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
           use-cross:   true
@@ -145,7 +145,7 @@ jobs:
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
-      - name:          Testing ${{ matrix.target }}-${{matrix.toolchain}}
+      - name:          Testing ${{ matrix.target }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
           use-cross:   true
@@ -172,6 +172,7 @@ jobs:
     runs-on:           ubuntu-latest
     env:
       RUST_BACKTRACE:  full
+      RUSTFLAGS:       "-C link-arg=-s" #Strip binaries
     steps:
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
@@ -217,7 +218,7 @@ jobs:
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
-      - name:          Building ${{ matrix.target }}-${{matrix.toolchain}}
+      - name:          Building ${{ matrix.target }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
           use-cross:   true
@@ -226,3 +227,11 @@ jobs:
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
+- name:                Prepare artifact's
+  run:                 .github/workflows/prepare_artifacts.sh ${{ matrix.target }}
+  shell:               bash
+- name:                Upload artifact's
+  uses:                actions/upload-artifact@v1
+  with:
+    name:              ${{ matrix.platform }}.${{ matrix.toolchain }}.${{ matrix.compiler }}.zip
+    path:              artifacts/

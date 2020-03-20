@@ -79,11 +79,11 @@ jobs:
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
-      - name:          Checking ${{ matrix.platform }}-${{matrix.toolchain}}
+      - name:          Checking ${{ matrix.platform }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
           command:     check
-          toolchain:   ${{matrix.toolchain}}
+          toolchain:   ${{ matrix.toolchain }}
           args:        --locked --all --release --verbose
       - name:          Stop sccache
         if:            always()
@@ -157,11 +157,11 @@ jobs:
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
-      - name:          Testing ${{ matrix.platform }}-${{matrix.toolchain}}
+      - name:          Testing ${{ matrix.platform }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
           command:     test
-          toolchain:   ${{matrix.toolchain}}
+          toolchain:   ${{ matrix.toolchain }}
           args:        --locked --all --release --verbose
       - name:          Stop sccache
         if:            always()
@@ -185,6 +185,10 @@ jobs:
     runs-on:           ${{ matrix.platform }}
     env:
       RUST_BACKTRACE:  full
+      # NOTE: Enables the aes-ni instructions for RustCrypto dependency.
+      # Strip binaries
+      # If you change this please remember to also update .cargo/config
+      RUSTFLAGS:       "-C target-feature=+aes,+sse2,+ssse3 -C link-arg=-s"
     steps:
       - name:          Set default compiler
         if:            matrix.compiler == 'clang'
@@ -235,12 +239,20 @@ jobs:
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
-      - name:          Building ${{ matrix.platform }}-${{matrix.toolchain}}
+      - name:          Building ${{ matrix.platform }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
           command:     build
-          toolchain:   ${{matrix.toolchain}}
+          toolchain:   ${{ matrix.toolchain }}
           args:        --locked --all --release --verbose
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
+      - name:         Prepare artifact's
+        run:    .github/workflows/prepare_artifacts.sh
+        shell:  bash
+      - name:   Upload artifact's
+        uses:   actions/upload-artifact@v1
+        with:
+          name: ${{ matrix.platform }}.${{ matrix.toolchain }}.${{ matrix.compiler }}.zip
+          path: artifacts/
