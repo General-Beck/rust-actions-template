@@ -1,0 +1,85 @@
+name:                  Build and Test Suite
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - stable
+jobs:
+  build-tests:
+    name:              Test and Build
+    strategy:
+      matrix:
+        platform:
+          - ubuntu-16.04
+          - macos-latest
+          - windows-latest
+        toolchain:
+          - stable
+          - beta
+          - nightly
+        compiler:
+          - clang
+          - gcc
+    runs-on:           ${{ matrix.platform }}
+    env:
+      RUST_BACKTRACE:  full
+    steps:
+      - name:          Set cache hash
+        run:           echo "::set-env name=cache_hash::${{ runner.os }}-${{ rustc-hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}
+      - name:          Set default compiler
+        if:            matrix.compiler == 'clang'
+        run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CC::clang++"
+      - name:          Install LLVM for Windows
+        if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
+        run:           choco install llvm
+      - name:          Checkout sources & submodules
+        uses:          actions/checkout@master
+        with:
+          fetch-depth: 5
+          submodules:  recursive
+      - name:          Install toolchain
+        uses:          actions-rs/toolchain@v1
+        with:
+          profile:     minimal
+          toolchain:   ${{ matrix.toolchain }}
+          components:  clippy, rustfmt
+          override:    true
+      - name:          Cache cargo registry
+        uses:          actions/cache@master
+        with:
+          path:        $HOME/.cargo/registry
+          key:         cargo-registry-${{ cache-hash }}
+      - name:          Cache cargo index
+        uses:          actions/cache@master
+        with:
+          path:        $HOME/.cargo/git
+          key:         cargo-git-${{ cache-hash }}
+      - name:          Cache cargo build
+        uses:          actions/cache@master
+        with:
+          path:        target
+          key:         cargo-target-${{ cachs-hash }}
+      - name:          Cache sccache
+        uses:          actions/cache@master
+        with:
+          path:        "$HOME/sccache"
+          key:         sccache-${{ cache-hash }}
+      - name:          Install & start sccache for ${{ matrix.platform }}
+        shell:         pwsh
+        run:           pwsh scripts/actions/install-sccache.ps1 ${{ runner.os}}
+      - name:          Sccache statistics
+        run:           sccache --show-stats
+      - name:          Testing ${{ matrix.platform }}-${{matrix.toolchain}}
+        uses:          actions-rs/cargo@master
+        with:
+          command:     test
+          toolchain:   ${{matrix.toolchain}}
+          args:        --locked --all --release --verbose
+      - name:          Stop sccache
+        if:            always()
+        run:           sccache --stop-server
+      - name:          Prepare build directory for cache
+        shell:         bash
+        run:           bash scripts/actions/clean-target.sh
