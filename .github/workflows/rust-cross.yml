@@ -1,4 +1,4 @@
-name:                  Check, Test and Build Suite
+name:                  Check, Test and Build cross-compilation Suite
 
 on:
   pull_request:
@@ -12,30 +12,23 @@ on:
       - 'README.md'
 jobs:
   check:
-    name:              Check
+    name:              Check cross
     strategy:
       matrix:
-        platform:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
         toolchain:
           - stable
           - beta
           - nightly
-        compiler:
-          - clang
-          - gcc
-    runs-on:           ${{ matrix.platform }}
+        target: #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
+          - aarch64-unknown-linux-gnu
+          - aarch64-unknown-linux-musl
+          - armv7-unknown-linux-gnueabihf
+          - armv7-unknown-linux-musleabihf
+          - x86_64-unknown-linux-musl
+    runs-on:           ubuntu-latest
     env:
       RUST_BACKTRACE:  full
     steps:
-      - name:          Set default compiler
-        if:            matrix.compiler == 'clang'
-        run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
-      - name:          Install LLVM for Windows
-        if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
-        run:           choco install llvm
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
@@ -47,6 +40,7 @@ jobs:
         with:
           profile:     minimal
           toolchain:   ${{ matrix.toolchain }}
+          target:      ${{ matrix.target }}
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
@@ -79,41 +73,34 @@ jobs:
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
-      - name:          Checking ${{ matrix.platform }}-${{matrix.toolchain}}
+      - name:          Checking ${{ matrix.target }}-${{matrix.toolchain}}
         uses:          actions-rs/cargo@master
         with:
+          use-cross: true
           command:     check
-          toolchain:   ${{matrix.toolchain}}
-          args:        --locked --all --release --verbose
+          args:        --target ${{ matrix.target }} --locked --all --release --verbose
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
   test:
-    name:              Test
+    name:              Test cross
     needs: [check]
     strategy:
       matrix:
-        platform:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
         toolchain:
           - stable
           - beta
           - nightly
-        compiler:
-          - clang
-          - gcc
-    runs-on:           ${{ matrix.platform }}
+        target: #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
+          - aarch64-unknown-linux-gnu
+          - aarch64-unknown-linux-musl
+          - armv7-unknown-linux-gnueabihf
+          - armv7-unknown-linux-musleabihf
+          - x86_64-unknown-linux-musl
+    runs-on:           ubuntu-latest
     env:
       RUST_BACKTRACE:  full
     steps:
-      - name:          Set default compiler
-        if:            matrix.compiler == 'clang'
-        run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
-      - name:          Install LLVM for Windows
-        if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
-        run:           choco install llvm
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
@@ -125,6 +112,7 @@ jobs:
         with:
           profile:     minimal
           toolchain:   ${{ matrix.toolchain }}
+          target:      ${{ matrix.target }}
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
@@ -157,41 +145,34 @@ jobs:
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
-      - name:          Testing ${{ matrix.platform }}-${{matrix.toolchain}}
+      - name:          Testing ${{ matrix.target }}-${{matrix.toolchain}}
         uses:          actions-rs/cargo@master
         with:
+          use-cross: true
           command:     test
-          toolchain:   ${{matrix.toolchain}}
-          args:        --locked --all --release --verbose
+          args:        --target ${{ matrix.target }} --locked --all --release --verbose
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
   build:
-    name:              Build
+    name:              Build cross
     needs: [check,test]
     strategy:
       matrix:
-        platform:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
         toolchain:
           - stable
           - beta
           - nightly
-        compiler:
-          - clang
-          - gcc
-    runs-on:           ${{ matrix.platform }}
+        target: #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
+          - aarch64-unknown-linux-gnu
+          - aarch64-unknown-linux-musl
+          - armv7-unknown-linux-gnueabihf
+          - armv7-unknown-linux-musleabihf
+          - x86_64-unknown-linux-musl
+    runs-on:           ubuntu-latest
     env:
       RUST_BACKTRACE:  full
     steps:
-      - name:          Set default compiler
-        if:            matrix.compiler == 'clang'
-        run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
-      - name:          Install LLVM for Windows
-        if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
-        run:           choco install llvm
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
@@ -203,6 +184,7 @@ jobs:
         with:
           profile:     minimal
           toolchain:   ${{ matrix.toolchain }}
+          target:      ${{ matrix.target }}
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
@@ -235,12 +217,12 @@ jobs:
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
-      - name:          Building ${{ matrix.platform }}-${{matrix.toolchain}}
+      - name:          Building ${{ matrix.target }}-${{matrix.toolchain}}
         uses:          actions-rs/cargo@master
         with:
+          use-cross: true
           command:     build
-          toolchain:   ${{matrix.toolchain}}
-          args:        --locked --all --release --verbose
+          args:        --target ${{ matrix.target }} --locked --all --release --verbose
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
