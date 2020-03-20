@@ -47,8 +47,8 @@ jobs:
       - name:          Set cache hash
         shell:         bash
         run: |
-          export get_hash="${{ runner.os }}-${rustc-hash}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
-          echo "get_hash value: " $get_hash " " $ {rustc_hash}
+          export get_hash="${{ runner.os }}-$rustc-hash-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
+          echo "get_hash value: " $get_hash " " $rustc_hash
           #echo "::set-env name=cache_hash::$get_hash"
           printenv
       - name:          Cache cargo registry
@@ -73,7 +73,7 @@ jobs:
           key:         sccache-
       - name:          Install & start sccache for ${{ matrix.platform }}
         shell:         pwsh
-        run:           pwsh scripts/actions/install-sccache.ps1 ${{ runner.os}}
+        run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
       - name:          Testing ${{ matrix.platform }}-${{matrix.toolchain}}
