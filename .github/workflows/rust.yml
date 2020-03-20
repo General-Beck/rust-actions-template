@@ -51,27 +51,28 @@ jobs:
           export get_hash="${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
           #echo "get_hash value: " $get_hash " " $rustc_hash
           echo "::set-env name=cache_hash::$get_hash"
+          echo "cache_hash " $cache_hash
           printenv
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
           path:        $HOME/.cargo/registry
-          key:         cargo-registry-${{ cache-hash }}
+          key:         cargo-registry-
       - name:          Cache cargo index
         uses:          actions/cache@master
         with:
           path:        $HOME/.cargo/git
-          key:         cargo-git-${{ cache-hash }}
+          key:         cargo-git-
       - name:          Cache cargo build
         uses:          actions/cache@master
         with:
           path:        target
-          key:         cargo-target-${{ cache-hash }}
+          key:         cargo-target-
       - name:          Cache sccache
         uses:          actions/cache@master
         with:
           path:        "$HOME/sccache"
-          key:         sccache-${{ cache-hash }}
+          key:         sccache-
       - name:          Install & start sccache for ${{ matrix.platform }}
         shell:         pwsh
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
