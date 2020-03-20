@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 5
           submodules:  recursive
       - name:          Install toolchain
-        uses:          actions-rs/toolchain@v1
+        uses:          actions-rs/toolchain@master
         with:
           profile:     minimal
           toolchain:   ${{ matrix.toolchain }}
