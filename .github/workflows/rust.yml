@@ -48,7 +48,7 @@ jobs:
       - name:          Set cache hash
         shell:         bash
         run: |
-          echo "RUSTC:" $RUSTC_HASH
+          echo "RUSTC:" ${{ steps.toolchain.outputs.rustc_hash }}
           export get_hash="${{ runner.os }}-$rustc-hash-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
           echo "get_hash value: " $get_hash " " $rustc_hash
           #echo "::set-env name=cache_hash::$get_hash"
