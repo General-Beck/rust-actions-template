@@ -52,15 +52,15 @@ jobs:
       - name:          Set cache hash
         run: |
           export get_hash="${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
-          echo "get_hash value: " $get_hash
-          echo "::set-env name=cache_hash::${get_hash}"
-          echo "cache_hash " $cache_hash
+          #echo "get_hash value: " $get_hash
+          #echo "::set-env name=cache_hash::${get_hash}"
+          #echo "cache_hash " $cache_hash
           printenv
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
           path:        $HOME/.cargo/registry
-          key:         cargo-registry-
+          key:         cargo-registry-$get_hash
       - name:          Cache cargo index
         uses:          actions/cache@master
         with:
