@@ -6,6 +6,10 @@ on:
     branches:
       - master
       - stable
+    tags:
+      - v*
+    paths-ignore:
+      - 'README.MD'
 jobs:
   build-tests:
     name:              Check
@@ -46,11 +50,10 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache hash
-        shell:         bash
         run: |
           export get_hash="${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
           echo "get_hash value: " $get_hash
-          echo "::set-env name=cache_hash::$get_hash"
+          echo "::set-env name=cache_hash::${get_hash}"
           echo "cache_hash " $cache_hash
           printenv
       - name:          Cache cargo registry
