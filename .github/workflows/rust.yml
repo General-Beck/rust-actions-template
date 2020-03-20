@@ -28,7 +28,7 @@ jobs:
     steps:
       - name:          Set default compiler
         if:            matrix.compiler == 'clang'
-        run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CC::clang++"
+        run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
       - name:          Install LLVM for Windows
         if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
         run:           choco install llvm
@@ -38,6 +38,7 @@ jobs:
           fetch-depth: 5
           submodules:  recursive
       - name:          Install toolchain
+        id: toolchain
         uses:          actions-rs/toolchain@master
         with:
           profile:     minimal
@@ -47,6 +48,7 @@ jobs:
       - name:          Set cache hash
         shell:         bash
         run: |
+          echo "RUSTC:" $RUSTC_HASH
           export get_hash="${{ runner.os }}-$rustc-hash-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
           echo "get_hash value: " $get_hash " " $rustc_hash
           #echo "::set-env name=cache_hash::$get_hash"
