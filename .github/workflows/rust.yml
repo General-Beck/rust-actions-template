@@ -50,32 +50,28 @@ jobs:
           components:  clippy, rustfmt
           override:    true
       - name:          Set cache hash
-        run: |
-          export get_hash="${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
-          #echo "get_hash value: " $get_hash
-          #echo "::set-env name=cache_hash::${get_hash}"
-          #echo "cache_hash " $cache_hash
-          printenv
+        env:
+          CACHE_HASH:  ${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
           path:        $HOME/.cargo/registry
-          key:         cargo-registry-$get_hash
+          key:         cargo-registry-$CACHE_HASH
       - name:          Cache cargo index
         uses:          actions/cache@master
         with:
           path:        $HOME/.cargo/git
-          key:         cargo-git-
+          key:         cargo-git-$CACHE_HASH
       - name:          Cache cargo build
         uses:          actions/cache@master
         with:
           path:        target
-          key:         cargo-target-
+          key:         cargo-target-$CACHE_HASH
       - name:          Cache sccache
         uses:          actions/cache@master
         with:
           path:        "$HOME/sccache"
-          key:         sccache-
+          key:         sccache-$CACHE_HASH
       - name:          Install & start sccache for ${{ matrix.platform }}
         shell:         pwsh
         run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
