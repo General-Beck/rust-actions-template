@@ -48,9 +48,9 @@ jobs:
       - name:          Set cache hash
         shell:         bash
         run: |
-          #export get_hash="${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
+          export get_hash="${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
           #echo "get_hash value: " $get_hash " " $rustc_hash
-          echo "::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
+          echo "::set-env name=cache_hash::$get_hash"
           printenv
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -86,6 +86,3 @@ jobs:
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
-      - name:          Prepare build directory for cache
-        shell:         bash
-        run:           bash scripts/actions/clean-target.sh
