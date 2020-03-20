@@ -27,7 +27,7 @@ jobs:
       RUST_BACKTRACE:  full
     steps:
       - name:          Set cache hash
-        run:           echo "::set-env name=cache_hash::${{ runner.os }}-${{ rustc-hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}
+        run:           echo "::set-env name=cache_hash::${{ runner.os }}-${{ rustc-hash }}-${{ matrix.compiler}}-${{ hashFiles('**/Cargo.lock') }}"
       - name:          Set default compiler
         if:            matrix.compiler == 'clang'
         run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CC::clang++"
