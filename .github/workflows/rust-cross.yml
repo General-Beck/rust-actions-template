@@ -68,9 +68,6 @@ jobs:
         with:
           path:        "$HOME/sccache"
           key:         sccache-${{ env['cache_hash'] }}
-      - name:          Install & start sccache for ${{ matrix.platform }}
-        shell:         pwsh
-        run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
       - name:          Checking ${{ matrix.target }}-${{ matrix.toolchain }}
@@ -140,9 +137,6 @@ jobs:
         with:
           path:        "$HOME/sccache"
           key:         sccache-${{ env['cache_hash'] }}
-      - name:          Install & start sccache for ${{ matrix.platform }}
-        shell:         pwsh
-        run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
       - name:          Testing ${{ matrix.target }}-${{ matrix.toolchain }}
@@ -213,9 +207,6 @@ jobs:
         with:
           path:        "$HOME/sccache"
           key:         sccache-${{ env['cache_hash'] }}
-      - name:          Install & start sccache for ${{ matrix.platform }}
-        shell:         pwsh
-        run:           pwsh .github/workflows/sccache.ps1 ${{ runner.os}}
       - name:          Sccache statistics
         run:           sccache --show-stats
       - name:          Building ${{ matrix.target }}-${{ matrix.toolchain }}
