@@ -233,5 +233,5 @@ jobs:
       - name:          Upload artifact's
         uses:          actions/upload-artifact@v1
         with:
-          name:        ${{ matrix.platform }}.${{ matrix.toolchain }}.${{ matrix.compiler }}.zip
+          name:        ${{ matrix.toolchain }}.${{ matrix.target }}.zip
           path:        artifacts/

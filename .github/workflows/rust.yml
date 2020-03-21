@@ -249,7 +249,7 @@ jobs:
         if:            always()
         run:           sccache --stop-server
       - name:         Prepare artifact's
-        run:    .github/workflows/prepare_artifacts.sh
+        run:    .github/workflows/prepare_artifacts.sh ""
         shell:  bash
       - name:   Upload artifact's
         uses:   actions/upload-artifact@v1
