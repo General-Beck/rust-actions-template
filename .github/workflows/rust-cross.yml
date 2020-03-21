@@ -47,7 +47,6 @@ jobs:
         run:           |
           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
           mkdir -p $HOME/sccache
-          sudo chmod -R a+w $HOME/.cargo
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -120,7 +119,6 @@ jobs:
         run:           |
           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
           mkdir -p $HOME/sccache
-          sudo chmod -R a+w $HOME/.cargo
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -194,7 +192,6 @@ jobs:
         run:           |
           echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
           mkdir -p $HOME/sccache
-          sudo chmod -R a+w $HOME/.cargo
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
