@@ -11,6 +11,7 @@ else
 fi
 mkdir -p ./artifacts/
 cd ./target/$1/release/
+ls -a
 echo "_____ Find binary files in target _____"
 find . -maxdepth 1 -type f ! -size 0 -exec grep -IL . "{}" \; | cut -c 3-
 echo "_____ Move binaries to artifacts folder _____"
