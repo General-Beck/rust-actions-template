@@ -73,7 +73,6 @@ jobs:
       - name:          Checking ${{ matrix.target }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
-          use-cross:   true
           command:     check
           args:        --target ${{ matrix.target }} --all --verbose
       - name:          Stop sccache
@@ -142,7 +141,6 @@ jobs:
       - name:          Testing ${{ matrix.target }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
-          use-cross:   true
           command:     test
           args:        --target ${{ matrix.target }} --all --verbose
       - name:          Stop sccache
@@ -212,7 +210,6 @@ jobs:
       - name:          Building ${{ matrix.target }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
-          use-cross:   true
           command:     build
           args:        --target ${{ matrix.target }} --all --verbose --release
       - name:          Stop sccache
