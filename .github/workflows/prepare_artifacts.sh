@@ -1,18 +1,22 @@
 #!/bin/bash
 set -e # fail on any error
 set -u # treat unset variables as error
-set -v # verbose output
+
 # ARGUMENT $1 CARGO_TARGET
 
-echo "_____ Post-processing binaries _____"
-
-mkdir -p artifacts/
-cd artifacts/
-
-for binary in $(ls ../target/$1/release/)
+mkdir -p ./artifacts/
+cd ./target/$1/release/
+echo "_____ Find binary files _____"
+find . -maxdepth 1 -type f ! -size 0 -exec grep -IL . "{}" \; | cut -c 3-
+for binary in $(find . -maxdepth 1 -type f ! -size 0 -exec grep -IL . "{}" \; | cut -c 3- )
 do
-  cp -v target/$1/release/$binary $binary
-  rhash -v --sha3-256 $binary -o $binary.sha3 #Calculating checksum
+  cp -v $binary ../$1/../artifacts/$binary
+  rhash --sha3-256 ../$1/../artifacts/$binary -o ../$1/../artifacts/$binary.sha3 #Calculating checksum
+  echo "sha3: "$(cat ../$1/../artifacts/$binary.sha3)
+  #rm -f $binary
 done
-
-rm -rf artifacts/*
+#cd ../$1/..
+#echo "_____ Clean target dir _____"
+#find ./target/$1/release -maxdepth 1 -type f -delete;
+#rm -f  ./target/.rustc_info.json;
+#rm -rf ./target/$1/release/{deps,.fingerprint}/
