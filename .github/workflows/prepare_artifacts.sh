@@ -18,8 +18,8 @@ for binary in $(find . -maxdepth 1 -type f ! -size 0 -exec grep -IL . "{}" \; | 
 do
   mv -v $binary ../$dir/../artifacts/$binary
 done
-#cd ../$dir/..
-#echo "_____ Clean target dir _____"
-#find ./target/$dir/release -maxdepth 1 -type f -delete;
-#rm -f  ./target/.rustc_info.json;
-#rm -rf ./target/$dir/release/{deps,.fingerprint}/
+cd ../$dir/..
+echo "_____ Clean target dir _____"
+find ./target/$1/{debug,release} -maxdepth 1 -type f -delete;
+rm -f  ./target/.rustc_info.json;
+rm -rf ./target/$1/{debug,release}/{deps,.fingerprint}/

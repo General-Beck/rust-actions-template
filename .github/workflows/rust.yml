@@ -21,7 +21,6 @@ jobs:
           - windows-latest
         toolchain:
           - stable
-          - beta
           - nightly
         compiler:
           - clang
@@ -31,11 +30,20 @@ jobs:
       RUST_BACKTRACE:  full
     steps:
       - name:          Set default compiler
-        if:            matrix.compiler == 'clang'
-        run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
+        if:            matrix.compiler == 'clang' && matrix.platform != 'windows-latest'
+        run: |
+          echo ::set-env name=CC::clang
+          echo ::set-env name=CXX::clang++
+      - name:          Install sudo for windows #https://github.com/actions/virtual-environments/issues/572
+        if: matrix.platform == 'windows-latest'
+        run: choco install sudo
       - name:          Install LLVM for Windows
         if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
-        run:           choco install llvm
+        run:           |
+          choco install llvm
+          echo ::set-env name=CC::clang-cl.exe --enable-64-bit
+          echo ::set-env name=CXX::clang-cl.exe --enable-64-bit
+          refreshenv
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
@@ -49,10 +57,11 @@ jobs:
           toolchain:   ${{ matrix.toolchain }}
           components:  clippy, rustfmt
           override:    true
-      - name:          Set cache_hash ENV and prepare cache dir's
+      - name:          Set cache_hash ENV and prepare cache dir's #cargo dirs permission https://github.com/actions/virtual-environments/issues/572
         run:           |
-          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler }}-${{ hashFiles('**/Cargo.lock') }}
-          mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
+          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler }}-${{ hashFiles('**/Cargo.toml') }}
+          mkdir -p $HOME/sccache
+          sudo chmod -R a+w $HOME/.cargo
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -84,7 +93,7 @@ jobs:
         with:
           command:     check
           toolchain:   ${{ matrix.toolchain }}
-          args:        --locked --all --release --verbose
+          args:        --all  --verbose
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
@@ -99,7 +108,6 @@ jobs:
           - windows-latest
         toolchain:
           - stable
-          - beta
           - nightly
         compiler:
           - clang
@@ -109,11 +117,20 @@ jobs:
       RUST_BACKTRACE:  full
     steps:
       - name:          Set default compiler
-        if:            matrix.compiler == 'clang'
-        run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
+        if:            matrix.compiler == 'clang' && matrix.platform != 'windows-latest'
+        run: |
+          echo ::set-env name=CC::clang
+          echo ::set-env name=CXX::clang++
+      - name:          Install sudo for windows #https://github.com/actions/virtual-environments/issues/572
+        if: matrix.platform == 'windows-latest'
+        run: choco install sudo
       - name:          Install LLVM for Windows
         if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
-        run:           choco install llvm
+        run:           |
+          choco install llvm
+          echo ::set-env name=CC::clang-cl.exe --enable-64-bit
+          echo ::set-env name=CXX::clang-cl.exe --enable-64-bit
+          refreshenv
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
@@ -127,10 +144,11 @@ jobs:
           toolchain:   ${{ matrix.toolchain }}
           components:  clippy, rustfmt
           override:    true
-      - name:          Set cache_hash ENV and prepare cache dir's
+      - name:          Set cache_hash ENV and prepare cache dir's #cargo dirs permission https://github.com/actions/virtual-environments/issues/572
         run:           |
-          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler }}-${{ hashFiles('**/Cargo.lock') }}
-          mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
+          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler }}-${{ hashFiles('**/Cargo.toml') }}
+          mkdir -p $HOME/sccache
+          sudo chmod -R a+w $HOME/.cargo
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -160,9 +178,15 @@ jobs:
       - name:          Testing ${{ matrix.platform }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
+          command:     fmt
+          toolchain:   ${{ matrix.toolchain }}
+          args:        --all -- --check
+      - name:          Testing ${{ matrix.platform }}-${{ matrix.toolchain }}
+        uses:          actions-rs/cargo@master
+        with:
           command:     test
           toolchain:   ${{ matrix.toolchain }}
-          args:        --locked --all --release --verbose
+          args:        --all  --verbose
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
@@ -177,7 +201,6 @@ jobs:
           - windows-latest
         toolchain:
           - stable
-          - beta
           - nightly
         compiler:
           - clang
@@ -185,17 +208,26 @@ jobs:
     runs-on:           ${{ matrix.platform }}
     env:
       RUST_BACKTRACE:  full
-      # NOTE: Enables the aes-ni instructions for RustCrypto dependency.
+      # NOTE:          Enables the aes-ni instructions for RustCrypto dependency.
       # Strip binaries
       # If you change this please remember to also update .cargo/config
       RUSTFLAGS:       "-C target-feature=+aes,+sse2,+ssse3 -C link-arg=-s"
     steps:
       - name:          Set default compiler
-        if:            matrix.compiler == 'clang'
-        run:           echo "::set-env name=CC::clang"&&echo "::set-env name=CXX::clang++"
+        if:            matrix.compiler == 'clang' && matrix.platform != 'windows-latest'
+        run: |
+          echo ::set-env name=CC::clang
+          echo ::set-env name=CXX::clang++
+      - name:          Install sudo for windows #https://github.com/actions/virtual-environments/issues/572
+        if: matrix.platform == 'windows-latest'
+        run: choco install sudo
       - name:          Install LLVM for Windows
         if:            matrix.platform == 'windows-latest'  && matrix.compiler == 'clang'
-        run:           choco install llvm
+        run:           |
+          choco install llvm
+          echo ::set-env name=CC::clang-cl.exe --enable-64-bit
+          echo ::set-env name=CXX::clang-cl.exe --enable-64-bit
+          refreshenv
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
@@ -209,10 +241,11 @@ jobs:
           toolchain:   ${{ matrix.toolchain }}
           components:  clippy, rustfmt
           override:    true
-      - name:          Set cache_hash ENV and prepare cache dir's
+      - name:          Set cache_hash ENV and prepare cache dir's #cargo dirs permission https://github.com/actions/virtual-environments/issues/572
         run:           |
-          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler }}-${{ hashFiles('**/Cargo.lock') }}
-          mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
+          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.compiler }}-${{ hashFiles('**/Cargo.toml') }}
+          mkdir -p $HOME/sccache
+          sudo chmod -R a+w $HOME/.cargo
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -244,15 +277,15 @@ jobs:
         with:
           command:     build
           toolchain:   ${{ matrix.toolchain }}
-          args:        --locked --all --release --verbose
+          args:        --all  --verbose --release
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
-      - name:         Prepare artifact's
-        run:    .github/workflows/prepare_artifacts.sh ""
-        shell:  bash
-      - name:   Upload artifact's
-        uses:   actions/upload-artifact@v1
+      - name:          Prepare artifact's
+        run:           .github/workflows/prepare_artifacts.sh ""
+        shell:         bash
+      - name:          Upload artifact's
+        uses:          actions/upload-artifact@v1
         with:
-          name: ${{ matrix.platform }}.${{ matrix.toolchain }}.${{ matrix.compiler }}.zip
-          path: artifacts/
+          name:        ${{ matrix.platform }}.${{ matrix.toolchain }}.${{ matrix.compiler }}.zip
+          path:        artifacts/

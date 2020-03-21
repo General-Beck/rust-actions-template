@@ -17,14 +17,13 @@ jobs:
       matrix:
         toolchain:
           - stable
-          - beta
           - nightly
         target:        #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
           - aarch64-unknown-linux-gnu
-          - aarch64-unknown-linux-musl
+          #- aarch64-unknown-linux-musl
           - armv7-unknown-linux-gnueabihf
-          - armv7-unknown-linux-musleabihf
-          - x86_64-unknown-linux-musl
+          #- armv7-unknown-linux-musleabihf
+          #- x86_64-unknown-linux-musl
     runs-on:           ubuntu-latest
     env:
       RUST_BACKTRACE:  full
@@ -45,8 +44,9 @@ jobs:
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
         run:           |
-          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
-          mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
+          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
+          mkdir -p $HOME/sccache
+          sudo chmod -R a+w $HOME/.cargo
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -78,7 +78,7 @@ jobs:
         with:
           use-cross:   true
           command:     check
-          args:        --target ${{ matrix.target }} --locked --all --release --verbose
+          args:        --target ${{ matrix.target }} --all --verbose
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
@@ -89,14 +89,13 @@ jobs:
       matrix:
         toolchain:
           - stable
-          - beta
           - nightly
         target:        #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
           - aarch64-unknown-linux-gnu
-          - aarch64-unknown-linux-musl
+          #- aarch64-unknown-linux-musl
           - armv7-unknown-linux-gnueabihf
-          - armv7-unknown-linux-musleabihf
-          - x86_64-unknown-linux-musl
+          #- armv7-unknown-linux-musleabihf
+          #- x86_64-unknown-linux-musl
     runs-on:           ubuntu-latest
     env:
       RUST_BACKTRACE:  full
@@ -117,8 +116,9 @@ jobs:
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
         run:           |
-          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
-          mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
+          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
+          mkdir -p $HOME/sccache
+          sudo chmod -R a+w $HOME/.cargo
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -150,7 +150,7 @@ jobs:
         with:
           use-cross:   true
           command:     test
-          args:        --target ${{ matrix.target }} --locked --all --release --verbose
+          args:        --target ${{ matrix.target }} --all --verbose
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
@@ -161,14 +161,13 @@ jobs:
       matrix:
         toolchain:
           - stable
-          - beta
           - nightly
         target:        #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
           - aarch64-unknown-linux-gnu
-          - aarch64-unknown-linux-musl
+          #- aarch64-unknown-linux-musl
           - armv7-unknown-linux-gnueabihf
-          - armv7-unknown-linux-musleabihf
-          - x86_64-unknown-linux-musl
+          #- armv7-unknown-linux-musleabihf
+          #- x86_64-unknown-linux-musl
     runs-on:           ubuntu-latest
     env:
       RUST_BACKTRACE:  full
@@ -190,8 +189,9 @@ jobs:
           override:    true
       - name:          Set cache_hash ENV and prepare cache dir's
         run:           |
-          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
-          mkdir -p {$HOME/sccache,$HOME/.cargo/git,$HOME/.cargo/registry}
+          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
+          mkdir -p $HOME/sccache
+          sudo chmod -R a+w $HOME/.cargo
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -223,7 +223,7 @@ jobs:
         with:
           use-cross:   true
           command:     build
-          args:        --target ${{ matrix.target }} --locked --all --release --verbose
+          args:        --target ${{ matrix.target }} --all --verbose --release
       - name:          Stop sccache
         if:            always()
         run:           sccache --stop-server
