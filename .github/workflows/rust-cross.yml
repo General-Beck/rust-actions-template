@@ -31,6 +31,7 @@ jobs:
     steps:
       - name:          Update Git
         run:           |
+          apt-get install -y --no-install-recommends software-properties-common;
           add-apt-repository -y -u ppa:git-core/ppa;
           apt-get install -y --no-install-recommends git;
         shell:       bash
@@ -104,6 +105,7 @@ jobs:
     steps:
       - name:          Update Git
         run:           |
+          apt-get install -y --no-install-recommends software-properties-common;
           add-apt-repository -y -u ppa:git-core/ppa;
           apt-get install -y --no-install-recommends git;
         shell:       bash
@@ -178,6 +180,7 @@ jobs:
     steps:
       - name:          Update Git
         run:           |
+          apt-get install -y --no-install-recommends software-properties-common;
           add-apt-repository -y -u ppa:git-core/ppa;
           apt-get install -y --no-install-recommends git;
         shell:       bash
