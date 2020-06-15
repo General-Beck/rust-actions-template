@@ -31,9 +31,9 @@ jobs:
     steps:
       - name:          Update Git
         run:           |
-          apt-get update -y;
+          add-apt-repository -y -u ppa:git-core/ppa;
           apt-get install -y --no-install-recommends git;
-        shell:       bash      
+        shell:       bash
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
@@ -104,7 +104,7 @@ jobs:
     steps:
       - name:          Update Git
         run:           |
-          apt-get update -y;
+          add-apt-repository -y -u ppa:git-core/ppa;
           apt-get install -y --no-install-recommends git;
         shell:       bash
       - name:          Checkout sources & submodules
@@ -178,7 +178,7 @@ jobs:
     steps:
       - name:          Update Git
         run:           |
-          apt-get update -y;
+          add-apt-repository -y -u ppa:git-core/ppa;
           apt-get install -y --no-install-recommends git;
         shell:       bash
       - name:          Checkout sources & submodules
