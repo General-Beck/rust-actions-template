@@ -50,7 +50,6 @@ jobs:
           fetch-depth: 5
           submodules:  recursive
       - name:          Install toolchain
-        id:            toolchain
         uses:          actions-rs/toolchain@master
         with:
           profile:     minimal
@@ -137,7 +136,6 @@ jobs:
           fetch-depth: 5
           submodules:  recursive
       - name:          Install toolchain
-        id:            toolchain
         uses:          actions-rs/toolchain@master
         with:
           profile:     minimal
@@ -234,7 +232,6 @@ jobs:
           fetch-depth: 5
           submodules:  recursive
       - name:          Install toolchain
-        id:            toolchain
         uses:          actions-rs/toolchain@master
         with:
           profile:     minimal
