@@ -20,9 +20,7 @@ jobs:
           - nightly
         target:        #List of [supported targets](https://github.com/rust-embedded/cross#supported-targets)
           - aarch64-unknown-linux-gnu
-          - aarch64-unknown-linux-musl
           - armv7-unknown-linux-gnueabihf
-          - armv7-unknown-linux-musleabihf
           - x86_64-unknown-linux-musl
     runs-on:           ubuntu-latest
     container:         rustembedded/cross:${{matrix.target}}
