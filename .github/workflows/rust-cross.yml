@@ -50,11 +50,6 @@ jobs:
           target:      ${{ matrix.target }}
           components:  clippy, rustfmt
           override:    true
-      - name:          Set cache_hash ENV and prepare cache dir's
-        run:           |
-          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
-          mkdir -p $HOME/sccache
-        shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
@@ -70,21 +65,11 @@ jobs:
         with:
           path:        target
           key:         cargo-target-${{ env['cache_hash'] }}
-      - name:          Cache sccache
-        uses:          actions/cache@master
-        with:
-          path:        "$HOME/sccache"
-          key:         sccache-${{ env['cache_hash'] }}
-      - name:          Sccache statistics
-        run:           sccache --show-stats
       - name:          Checking ${{ matrix.target }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
           command:     check
           args:        --target ${{ matrix.target }} --all --verbose
-      - name:          Stop sccache
-        if:            always()
-        run:           sccache --stop-server
   test:
     name:              Test cross
     needs:             [check]
@@ -125,10 +110,6 @@ jobs:
           target:      ${{ matrix.target }}
           components:  clippy, rustfmt
           override:    true
-      - name:          Set cache_hash ENV and prepare cache dir's
-        run:           |
-          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
-          mkdir -p $HOME/sccache
         shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
@@ -145,21 +126,11 @@ jobs:
         with:
           path:        target
           key:         cargo-target-${{ env['cache_hash'] }}
-      - name:          Cache sccache
-        uses:          actions/cache@master
-        with:
-          path:        "$HOME/sccache"
-          key:         sccache-${{ env['cache_hash'] }}
-      - name:          Sccache statistics
-        run:           sccache --show-stats
       - name:          Testing ${{ matrix.target }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
           command:     test
           args:        --target ${{ matrix.target }} --all --verbose
-      - name:          Stop sccache
-        if:            always()
-        run:           sccache --stop-server
   build:
     name:              Build cross
     needs:             [check,test]
@@ -201,11 +172,6 @@ jobs:
           target:      ${{ matrix.target }}
           components:  clippy, rustfmt
           override:    true
-      - name:          Set cache_hash ENV and prepare cache dir's
-        run:           |
-          echo ::set-env name=cache_hash::${{ runner.os }}-${{ steps.toolchain.outputs.rustc_hash }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.toml') }}
-          mkdir -p $HOME/sccache
-        shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
@@ -221,21 +187,11 @@ jobs:
         with:
           path:        target
           key:         cargo-target-${{ env['cache_hash'] }}
-      - name:          Cache sccache
-        uses:          actions/cache@master
-        with:
-          path:        "$HOME/sccache"
-          key:         sccache-${{ env['cache_hash'] }}
-      - name:          Sccache statistics
-        run:           sccache --show-stats
       - name:          Building ${{ matrix.target }}-${{ matrix.toolchain }}
         uses:          actions-rs/cargo@master
         with:
           command:     build
           args:        --target ${{ matrix.target }} --all --verbose --release
-      - name:          Stop sccache
-        if:            always()
-        run:           sccache --stop-server
       - name:          Prepare artifact's
         run:           .github/workflows/prepare_artifacts.sh ${{ matrix.target }}
         shell:         bash
