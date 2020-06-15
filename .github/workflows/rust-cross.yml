@@ -42,7 +42,6 @@ jobs:
           fetch-depth: 5
           submodules:  recursive
       - name:          Install toolchain
-        id:            toolchain
         uses:          actions-rs/toolchain@master
         with:
           profile:     minimal
@@ -102,7 +101,6 @@ jobs:
           fetch-depth: 5
           submodules:  recursive
       - name:          Install toolchain
-        id:            toolchain
         uses:          actions-rs/toolchain@master
         with:
           profile:     minimal
@@ -110,7 +108,6 @@ jobs:
           target:      ${{ matrix.target }}
           components:  clippy, rustfmt
           override:    true
-        shell:         bash
       - name:          Cache cargo registry
         uses:          actions/cache@master
         with:
@@ -164,7 +161,6 @@ jobs:
           fetch-depth: 5
           submodules:  recursive
       - name:          Install toolchain
-        id:            toolchain
         uses:          actions-rs/toolchain@master
         with:
           profile:     minimal
