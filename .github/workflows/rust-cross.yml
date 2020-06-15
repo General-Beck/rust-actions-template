@@ -29,6 +29,11 @@ jobs:
     env:
       RUST_BACKTRACE:  full
     steps:
+      - name:          Update Git
+        run:           |
+          apt-get update -y;
+          apt-get install -y --no-install-recommends git;
+        shell:       bash      
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
@@ -97,6 +102,11 @@ jobs:
     env:
       RUST_BACKTRACE:  full
     steps:
+      - name:          Update Git
+        run:           |
+          apt-get update -y;
+          apt-get install -y --no-install-recommends git;
+        shell:       bash
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
@@ -166,6 +176,11 @@ jobs:
       RUST_BACKTRACE:  full
       RUSTFLAGS:       "-C link-arg=-s" #Strip binaries
     steps:
+      - name:          Update Git
+        run:           |
+          apt-get update -y;
+          apt-get install -y --no-install-recommends git;
+        shell:       bash
       - name:          Checkout sources & submodules
         uses:          actions/checkout@master
         with:
